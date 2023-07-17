@@ -1710,7 +1710,10 @@ Rcpp::List sbart(arma::mat x_train,
         arma::cube all_tree_post(y_train.size(),n_tree,n_post,arma::fill::zeros);
 
         // Only for the friedman case
-        arma::cube all_basis_pred_post(y_train.size(),data.d_var,n_post,arma::fill::zeros);
+        arma::cube all_basis_pred_post_one(y_train.size(),data.n_tree,n_post,arma::fill::zeros);
+        arma::cube all_basis_pred_post_two(y_train.size(),data.n_tree,n_post,arma::fill::zeros);
+        arma::cube all_basis_pred_post_three(y_train.size(),data.n_tree,n_post,arma::fill::zeros);
+        arma::cube all_basis_pred_post_four(y_train.size(),data.n_tree,n_post,arma::fill::zeros);
 
 
         arma::vec tau_post = arma::zeros<arma::vec>(n_post);
@@ -1757,14 +1760,21 @@ Rcpp::List sbart(arma::mat x_train,
                 std::cout.flush();
 
 
-                // Getting zeros
+                // Getting zeros for MCMC and TREES
                 arma::vec prediction_train_sum(data.x_train.n_rows,arma::fill::zeros);
+                arma::vec prediction_test_sum(data.x_test.n_rows,arma::fill::zeros);
+
+
                 arma::vec prediction_train_sum_one(data.x_train.n_rows,arma::fill::zeros);
                 arma::vec prediction_train_sum_two(data.x_train.n_rows,arma::fill::zeros);
                 arma::vec prediction_train_sum_three(data.x_train.n_rows,arma::fill::zeros);
                 arma::vec prediction_train_sum_four(data.x_train.n_rows,arma::fill::zeros);
 
-                arma::vec prediction_test_sum(data.x_test.n_rows,arma::fill::zeros);
+                arma::mat prediction_train_sum_one_mat(data.x_train.n_rows,data.n_tree,arma::fill::zeros);
+                arma::mat prediction_train_sum_two_mat(data.x_train.n_rows,data.n_tree,arma::fill::zeros);
+                arma::mat prediction_train_sum_three_mat(data.x_train.n_rows,data.n_tree,arma::fill::zeros);
+                arma::mat prediction_train_sum_four_mat(data.x_train.n_rows,data.n_tree,arma::fill::zeros);
+
 
                 for(int t = 0; t<data.n_tree;t++){
 
@@ -1828,6 +1838,11 @@ Rcpp::List sbart(arma::mat x_train,
                         data.tree_mcmc_matrix(tree_mcmc_counter,1) = mcmc_iter;
                         tree_mcmc_counter++;
 
+                        prediction_train_sum_one_mat.col(t) = prediction_train_sum_one;
+                        prediction_train_sum_two_mat.col(t) = prediction_train_sum_two;
+                        prediction_train_sum_three_mat.col(t) = prediction_train_sum_three;
+                        prediction_train_sum_four_mat.col(t) = prediction_train_sum_four;
+
                         // Updating the tree
                         // cout << "Residuals error 2.0"<< endl;
                         tree_fits_store.col(t) = y_hat;
@@ -1859,10 +1874,10 @@ Rcpp::List sbart(arma::mat x_train,
                         y_train_hat_post.col(curr) = prediction_train_sum;
                         y_test_hat_post.col(curr) = prediction_test_sum;
                         all_tree_post.slice(curr) = tree_fits_store;
-                        all_basis_pred_post.slice(curr).col(0) = prediction_train_sum_one;
-                        all_basis_pred_post.slice(curr).col(1) = prediction_train_sum_two;
-                        all_basis_pred_post.slice(curr).col(2) = prediction_train_sum_three;
-                        all_basis_pred_post.slice(curr).col(3) = prediction_train_sum_four;
+                        all_basis_pred_post_one.slice(curr) = prediction_train_sum_one_mat;
+                        all_basis_pred_post_two.slice(curr) = prediction_train_sum_two_mat;
+                        all_basis_pred_post_three.slice(curr) = prediction_train_sum_three_mat;
+                        all_basis_pred_post_four.slice(curr) = prediction_train_sum_four_mat;
 
 
                         tau_post(curr) = data.tau;
@@ -1899,7 +1914,10 @@ Rcpp::List sbart(arma::mat x_train,
                                   tau_b_post_intercept,
                                   data.grow_accept,
                                   data.tree_mcmc_matrix,
-                                  all_basis_pred_post);
+                                  all_basis_pred_post_one,
+                                  all_basis_pred_post_two,
+                                  all_basis_pred_post_three,
+                                  all_basis_pred_post_four);
 }
 
 

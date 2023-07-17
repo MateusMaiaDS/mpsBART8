@@ -227,7 +227,10 @@ rbart <- function(x_train,
           stump)
 
      # Getting all posteriors
-     all_basis_post <- vector("list",length = dim(bart_obj[[9]])[3])
+     all_basis_post_one <- vector("list",length = dim(bart_obj[[9]])[3])
+     all_basis_post_two <- vector("list",length = dim(bart_obj[[9]])[3])
+     all_basis_post_three <- vector("list",length = dim(bart_obj[[9]])[3])
+     all_basis_post_four <- vector("list",length = dim(bart_obj[[9]])[3])
 
      if(scale_bool){
              # Tidying up the posterior elements
@@ -235,7 +238,11 @@ rbart <- function(x_train,
              y_test_post <- unnormalize_bart(z = bart_obj[[2]],a = min_y,b = max_y)
              for(i in 1:round(n_mcmc-n_burn)){
                      all_tree_post[[i]] <-  unnormalize_bart(z = bart_obj[[4]][,,i],a = min_y,b = max_y)
-                     all_basis_post[[i]] <- unnormalize_bart(z = bart_obj[[9]][,,i],a = min_y,b = max_y)
+                     all_basis_post_one[[i]] <- unnormalize_bart(z = bart_obj_one[[9]][,,i],a = min_y,b = max_y)
+                     all_basis_post_two[[i]] <- unnormalize_bart(z = bart_obj_one[[10]][,,i],a = min_y,b = max_y)
+                     all_basis_post_three[[i]] <- unnormalize_bart(z = bart_obj_one[[11]][,,i],a = min_y,b = max_y)
+                     all_basis_post_four[[i]] <- unnormalize_bart(z = bart_obj_one[[12]][,,i],a = min_y,b = max_y)
+
              }
              tau_post <- bart_obj[[3]]/((max_y-min_y)^2)
              tau_b_post <-  bart_obj[[5]]/((max_y-min_y)^2)
@@ -262,7 +269,11 @@ rbart <- function(x_train,
                  tau_b_post = tau_b_post,
                  tau_b_post_intercept = tau_b_post_intercept,
                  all_tree_post = all_tree_post,
-                 all_basis_post = all_basis_post,
+                 all_basis_post_one = all_basis_post_one,
+                 all_basis_post_two = all_basis_post_two,
+                 all_basis_post_three = all_basis_post_three,
+                 all_basis_post_four = all_basis_post_four,
+
                  prior = list(n_tree = n_tree,
                               alpha = alpha,
                               beta = beta,
