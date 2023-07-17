@@ -1695,10 +1695,10 @@ Rcpp::List sbart(arma::mat x_train,
 
 
         // Getting the Penalisation difference matrix
-        data.P = D.t()*D + arma::eye(D.n_cols,D.n_cols)*1e-10;
+        data.P = D.t()*D;//+ arma::eye(D.n_cols,D.n_cols)*1e-10;
         if(dif_order>0){
-             data.P(0,0) = data.P(0,0) + 0.001;
-             data.P(data.P.n_rows-1, data.P.n_cols-1) = data.P(data.P.n_rows-1, data.P.n_cols-1) + 0.001;
+             data.P(0,0) = data.P(0,0) + tau_mu;
+             data.P(data.P.n_rows-1, data.P.n_cols-1) = data.P(data.P.n_rows-1, data.P.n_cols-1) + tau_mu;
         }
         data.P_inv = arma::inv(data.P);
         // Getting the n_post

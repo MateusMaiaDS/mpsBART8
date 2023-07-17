@@ -145,7 +145,7 @@ rbart <- function(x_train,
      if(scale_bool){
         y_scale <- normalize_bart(y = y,a = min_y,b = max_y)
         tau_b_0 <- (4*n_tree*(kappa^2))
-        tau_b <- tau_mu <- 1*(4*n_tree*(kappa^2))
+        tau_b <- tau_mu <- 500*(4*n_tree*(kappa^2))
         # tau_b <- tau_mu <- 0.1
 
      } else {
@@ -238,10 +238,15 @@ rbart <- function(x_train,
              y_test_post <- unnormalize_bart(z = bart_obj[[2]],a = min_y,b = max_y)
              for(i in 1:round(n_mcmc-n_burn)){
                      all_tree_post[[i]] <-  unnormalize_bart(z = bart_obj[[4]][,,i],a = min_y,b = max_y)
-                     all_basis_post_one[[i]] <- unnormalize_bart(z = bart_obj_one[[9]][,,i],a = min_y,b = max_y)
-                     all_basis_post_two[[i]] <- unnormalize_bart(z = bart_obj_one[[10]][,,i],a = min_y,b = max_y)
-                     all_basis_post_three[[i]] <- unnormalize_bart(z = bart_obj_one[[11]][,,i],a = min_y,b = max_y)
-                     all_basis_post_four[[i]] <- unnormalize_bart(z = bart_obj_one[[12]][,,i],a = min_y,b = max_y)
+                     # all_basis_post_one[[i]] <- unnormalize_bart(z = bart_obj[[9]][,,i],a = min_y,b = max_y)
+                     # all_basis_post_two[[i]] <- unnormalize_bart(z = bart_obj[[10]][,,i],a = min_y,b = max_y)
+                     # all_basis_post_three[[i]] <- unnormalize_bart(z = bart_obj[[11]][,,i],a = min_y,b = max_y)
+                     # all_basis_post_four[[i]] <- unnormalize_bart(z = bart_obj[[12]][,,i],a = min_y,b = max_y)
+                     
+                     all_basis_post_one[[i]] <- bart_obj[[9]][,,i]
+                     all_basis_post_two[[i]] <- bart_obj[[10]][,,i]
+                     all_basis_post_three[[i]] <- bart_obj[[11]][,,i]
+                     all_basis_post_four[[i]] <- bart_obj[[12]][,,i]
 
              }
              tau_post <- bart_obj[[3]]/((max_y-min_y)^2)
@@ -254,6 +259,10 @@ rbart <- function(x_train,
              tau_post <- bart_obj[[3]]
              for(i in 1:round(n_mcmc-n_burn)){
                      all_tree_post[[i]] <-  bart_obj[[4]][,,i]
+                     all_basis_post_one[[i]] <- bart_obj[[9]][,,i]
+                     all_basis_post_two[[i]] <- bart_obj[[10]][,,i]
+                     all_basis_post_three[[i]] <- bart_obj[[11]][,,i]
+                     all_basis_post_four[[i]] <- bart_obj[[12]][,,i]
              }
              tau_b_post <-  bart_obj[[5]]
              tau_b_post_intercept <-  bart_obj[[6]]
